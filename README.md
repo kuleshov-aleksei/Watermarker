@@ -3,8 +3,6 @@
   <h1 align="center">Watermarker</h1>
 </p>
 
-# Watermarker
-
 This is a simple application designed for specific use-case: apply filename watermark to a bunch of pictures
 
 # Example
