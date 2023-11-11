@@ -25,7 +25,7 @@ jobs:
       TargetApplicationProjectFile: Watermarker.csproj
       InstallerApplicationProjectFile: Watermarker.Installer.csproj
       TargetApplicationDirectory: Watermarker
-      InsatllerApplicationDirectory: Watermarker.Installer
+      InstallerApplicationDirectory: Watermarker.Installer
       ZipPrefix: watermarker
       ZipInstaller: watermarker-installer.zip
       ArtifactName: WatermarkerInstaller
@@ -62,7 +62,7 @@ jobs:
     
     # Build installer
     - name: Build installer
-      run: msbuild $env:InsatllerApplicationDirectory/$env:InstallerApplicationProjectFile /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration
+      run: msbuild $env:InstallerApplicationDirectory/$env:InstallerApplicationProjectFile /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration
       env:
         Configuration: Release
         TargetPlatform: ${{ matrix.targetplatform }}
@@ -70,18 +70,18 @@ jobs:
     - name: Pack application into zip
       uses: vimtor/action-zip@v1.1
       with:
-        files: src/$env:TargetApplicationDirectory/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net6.0-windows/
-        dest: src/$env:InsatllerApplicationDirectory/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net6.0-windows/$env:ZipPrefix-${{github.ref_name}}.zip
+        files: src/${{ env.TargetApplicationDirectory }}/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net6.0-windows/
+        dest: src/${{ env.InstallerApplicationDirectory }}/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net6.0-windows/${{ env.ZipPrefix-${{github.ref_name}} }}.zip
     
     - name: Pack release with installer
       uses: vimtor/action-zip@v1.1
       with:
-        files: src/$env:InsatllerApplicationDirectory/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net6.0-windows/
-        dest: src/$env:InsatllerApplicationDirectory/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net6.0-windows/$env:ZipInstaller-${{github.ref_name}}.zip
+        files: src/${{ env.InstallerApplicationDirectory }}/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net6.0-windows/
+        dest: src/${{ env.InstallerApplicationDirectory }}/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net6.0-windows/${{ env.ZipInstaller-${{github.ref_name}} }}.zip
 
     # Upload artifacts: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
       with:
         name: ${{ env.ArtifactName }}
-        path: src/$env:InsatllerApplicationDirectory/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net6.0-windows/$env:ZipInstaller-${{github.ref_name}}.zip
+        path: src/${{ env.InstallerApplicationDirectory }}/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net6.0-windows/${{ env.ZipInstaller-${{github.ref_name}} }}.zip
