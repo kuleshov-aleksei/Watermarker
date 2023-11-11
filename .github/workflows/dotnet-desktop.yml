@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         configuration: [Release]
-        targetplatform: [x86, x64]
+        targetplatform: [x64]
 
     defaults:
       run:
@@ -75,8 +75,6 @@ jobs:
       env:
         Appx_Bundle: Always
         BuildMode: SideloadOnly
-        Appx_Bundle_Platforms: x86|x64
-        Appx_Package_Build_Mode: SideloadOnly
         Configuration: Release
         TargetPlatform: ${{ matrix.targetplatform }}
 
