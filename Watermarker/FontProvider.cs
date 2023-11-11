@@ -9,7 +9,7 @@ namespace Watermarker
         private readonly FontCollection m_fonts = new FontCollection();
         private readonly Font m_defaultFont;
 
-        public FontProvider()
+        public FontProvider(string fontName)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             string[] resources = assembly.GetManifestResourceNames();
@@ -21,8 +21,7 @@ namespace Watermarker
                 }
             }
 
-            m_defaultFont = m_fonts.Get("Rubik Mono One").CreateFont(16, FontStyle.Regular);
-            //m_defaultFont = m_fonts.Get("Roboto").CreateFont(16, FontStyle.Regular);
+            m_defaultFont = m_fonts.Get(fontName).CreateFont(16, FontStyle.Regular);
         }
 
         public Font GetDefault()

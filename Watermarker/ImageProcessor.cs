@@ -14,26 +14,38 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Watermarker
 {
     internal sealed class ImageProcessor
     {
-        private const float FONT_SCALING_FACTOR = 0.8f;
-
         private readonly FontProvider m_fontProvider;
         private readonly Logger m_consoleLogger = LogManager.GetLogger("ColoredConsole");
+        private readonly ApplicationConfiguration m_applicationConfiguration;
 
-        public ImageProcessor()
+        public ImageProcessor(ApplicationConfiguration applicationConfiguration)
         {
-            m_fontProvider = new FontProvider();
+            m_applicationConfiguration = applicationConfiguration;
+            m_fontProvider = new FontProvider(m_applicationConfiguration.FontName);
         }
 
         public void Process(List<string> files, string outputDirectory)
         {
-            foreach (string file in files)
+            if (m_applicationConfiguration.ParallelThreads == 1)
             {
-                ProcessFile(file, outputDirectory);
+                foreach (string file in files)
+                {
+                    ProcessFile(file, outputDirectory);
+                }
+            }
+            else
+            {
+                Parallel.ForEach(files, new ParallelOptions
+                {
+                    MaxDegreeOfParallelism = m_applicationConfiguration.ParallelThreads,
+                },
+                (file) => ProcessFile(file, outputDirectory));
             }
         }
 
@@ -49,17 +61,17 @@ namespace Watermarker
 
                 FontRectangle size = TextMeasurer.MeasureSize(filename, new TextOptions(font));
                 float scalingFactor = image.Width / size.Width;
-                font = new Font(font, scalingFactor * FONT_SCALING_FACTOR * font.Size);
+                font = new Font(font, scalingFactor * m_applicationConfiguration.FontScalingFactor * font.Size);
 
                 FontRectangle finalTextRectangle = TextMeasurer.MeasureSize(filename, new TextOptions(font));
-                int yPosition = (int)(image.Height - finalTextRectangle.Height - (float)image.Height * 0.1f);
+                int yPosition = (int)(image.Height - finalTextRectangle.Height - (float)image.Height * m_applicationConfiguration.OffsetFromBottom);
                 int xPosition = (int)(image.Width / 2 - finalTextRectangle.Width / 2);
                 float borderWidth = font.Size / 30;
 
                 image.Mutate(a => a.DrawText(filename,
                     font,
-                    Brushes.Solid(Color.FromRgb(67, 198, 161)),
-                    Pens.Solid(Color.FromRgb(0, 0, 0), borderWidth),
+                    Brushes.Solid(m_applicationConfiguration.InfillColor),
+                    Pens.Solid(m_applicationConfiguration.BorderColor, borderWidth),
                     new PointF(xPosition, yPosition)));
 
                 string outputPath = Path.Combine(outputDirectory, Path.GetFileName(file));

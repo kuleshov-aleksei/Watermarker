@@ -13,6 +13,7 @@ namespace Watermarker
         static void Main(string[] args)
         {
             ValidateArgs(args, out string directory);
+            ApplicationConfiguration applicationConfiguration = ApplicationConfiguration.Load();
 
             List<string> files = Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories).ToList();
             if (files.Count == 0)
@@ -29,7 +30,7 @@ namespace Watermarker
             string outputDirectory = Path.Combine(rootDirectory, $"{folder}_{now:yyyy\\yMM\\mdd\\d_HH\\hmm\\mss\\s}");
             Directory.CreateDirectory(outputDirectory);
 
-            ImageProcessor processor = new ImageProcessor();
+            ImageProcessor processor = new ImageProcessor(applicationConfiguration);
             processor.Process(files, outputDirectory);
         }
 

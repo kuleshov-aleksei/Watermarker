@@ -1,0 +1,8 @@
+{
+  "ParallelThreads": 4,
+  "FontName": "Rubik Mono One",
+  "FontScalingFactor": 0.8,
+  "OffsetFromBottom": 0.1,
+  "InfillColor": "rgb(67, 198, 161)",
+  "BorderColor": "rgb(0, 0, 0)"
+}
