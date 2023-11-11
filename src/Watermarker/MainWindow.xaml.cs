@@ -28,6 +28,11 @@ namespace Watermarker
         [Notify] private string _progress;
         [Notify] private string _copyTo;
 
+        private readonly List<string> m_knownExtensions = new List<string>()
+        {
+            ".png", ".jpg", ".jpeg", ".bmp", ".tiff", ".tga", ".gif", ".webp"
+        };
+
         public MainWindow(string[] args)
         {
             InitializeComponent();
@@ -46,6 +51,10 @@ namespace Watermarker
                 MessageBox.Show("No files were found", "Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
                 Environment.Exit(1);
             }
+
+            files = files
+                .Where(x => m_knownExtensions.Contains(Path.GetExtension(x).ToLowerInvariant()))
+                .ToList();
 
             m_logger.Info($"Found {files.Count} files");
             Status = $"Processing {files.Count} files";

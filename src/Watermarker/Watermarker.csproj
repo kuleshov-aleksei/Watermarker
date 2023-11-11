@@ -6,7 +6,7 @@
         <UseWPF>true</UseWPF>
         <Platforms>AnyCPU;x64</Platforms>
 	    <ApplicationIcon>Assets\icon-72x72.ico</ApplicationIcon>
-		<Version>1.1.6</Version>
+		<Version>1.2.0</Version>
     </PropertyGroup>
 
     <ItemGroup>
