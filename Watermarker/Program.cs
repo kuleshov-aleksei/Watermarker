@@ -2,8 +2,14 @@
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.Formats.Bmp;
+using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.Formats.Tga;
+using SixLabors.ImageSharp.Formats.Tiff;
+using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System;
@@ -46,7 +52,6 @@ namespace Watermarker
                 font = new Font(font, scalingFactor * FONT_SCALING_FACTOR * font.Size);
                 
                 FontRectangle finalTextRectangle = TextMeasurer.MeasureSize(filename, new TextOptions(font));
-                //int yPosition = (int)(image.Height / 2 - finalTextRectangle.Height / 2);
                 int yPosition = (int)(image.Height - finalTextRectangle.Height - (float)image.Height * 0.1f);
                 int xPosition = (int)(image.Width / 2 - finalTextRectangle.Width / 2);
                 float borderWidth = font.Size / 30;
@@ -57,11 +62,26 @@ namespace Watermarker
                     Pens.Solid(Color.FromRgb(0, 0, 0), borderWidth),
                     new PointF(xPosition, yPosition)));
 
-                string outputPath = Path.Combine("tmp", $"{filename}.png");
+                string outputPath = Path.Combine("tmp", Path.GetFileName(file));
                 m_consoleLogger.Trace($"Сохранение {file} в {outputPath}");
-                //image.Save(outputPath, new PngEncoder());
-                image.Save(outputPath, new JpegEncoder());
+
+                image.Save(outputPath, CreateImageEncoder(Path.GetExtension(file)));
             }
+        }
+
+        private static ImageEncoder CreateImageEncoder(string extension)
+        {
+            return extension.ToLowerInvariant() switch
+            {
+                ".png" => new PngEncoder(),
+                ".jpeg" or ".jpg" => new JpegEncoder(),
+                ".bmp" => new BmpEncoder(),
+                ".gif" => new GifEncoder(),
+                ".tga" => new TgaEncoder(),
+                ".tiff" => new TiffEncoder(),
+                ".webp" => new WebpEncoder(),
+                _ => new PngEncoder()
+            };
         }
 
         private static void ValidateArgs(string[] args, out string directory)
