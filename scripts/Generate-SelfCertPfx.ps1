@@ -1,5 +1,6 @@
 param(
-    [string]$Destination = "Watermarker_SelfSigned.pfx"
+    [string]$Destination = "Watermarker_SelfSigned.pfx",
+    [string]$DestinationBase64 = "Watermarker_SelfSigned.base64.txt"
 )
 
 $CertFriendlyName = "Watermarker_SelfSigned"
@@ -20,3 +21,6 @@ $certificateBytes = $cert.Export([System.Security.Cryptography.X509Certificates.
 
 # Save the self signed cert as a file
 [System.IO.File]::WriteAllBytes($Destination, $certificateBytes)
+
+# Generate base64 of cert
+[System.Convert]::ToBase64String($certificateBytes) | Out-File $DestinationBase64
