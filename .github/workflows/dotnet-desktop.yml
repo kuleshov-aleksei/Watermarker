@@ -77,7 +77,8 @@ jobs:
         BuildMode: SideloadOnly
         Appx_Bundle_Platforms: x86|x64
         Appx_Package_Build_Mode: SideloadOnly
-        Configuration: ${{ matrix.targetplatform }}
+        Configuration: Release
+        TargetPlatform: ${{ matrix.targetplatform }}
 
     # Remove the pfx
     - name: Remove the pfx
