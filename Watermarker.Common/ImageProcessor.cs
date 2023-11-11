@@ -1,21 +1,13 @@
 ﻿using NLog;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Diagnostics;
 using SixLabors.ImageSharp.Drawing.Processing;
-using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Bmp;
-using SixLabors.ImageSharp.Formats.Gif;
-using SixLabors.ImageSharp.Formats.Jpeg;
-using SixLabors.ImageSharp.Formats.Png;
-using SixLabors.ImageSharp.Formats.Tga;
-using SixLabors.ImageSharp.Formats.Tiff;
-using SixLabors.ImageSharp.Formats.Webp;
-using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Watermarker.Common
@@ -57,10 +49,9 @@ namespace Watermarker.Common
         {
             m_logger.Trace($"Processing file {file}");
             using (FileStream stream = File.OpenRead(file))
+            using (Image image = await Image.LoadAsync(stream))
             {
                 string filename = Path.GetFileNameWithoutExtension(file);
-                Image<Rgba32> image = await Image.LoadAsync<Rgba32>(stream);
-
                 Font font = m_fontProvider.GetDefault();
 
                 FontRectangle size = TextMeasurer.MeasureSize(filename, new TextOptions(font));
@@ -81,24 +72,13 @@ namespace Watermarker.Common
                 string outputPath = Path.Combine(outputDirectory, Path.GetFileName(file));
                 m_logger.Trace($"Saving {file} to {outputPath}");
 
-                await image.SaveAsync(outputPath, CreateImageEncoder(Path.GetExtension(file)));
+                using (FileStream outputStream = File.Create(outputPath))
+                {
+                    await image.SaveAsync(outputStream, image.Metadata.DecodedImageFormat);
+                }
+
                 OnProcess?.Invoke();
             }
-        }
-
-        private static ImageEncoder CreateImageEncoder(string extension)
-        {
-            return extension.ToLowerInvariant() switch
-            {
-                ".png" => new PngEncoder(),
-                ".jpeg" or ".jpg" => new JpegEncoder(),
-                ".bmp" => new BmpEncoder(),
-                ".gif" => new GifEncoder(),
-                ".tga" => new TgaEncoder(),
-                ".tiff" => new TiffEncoder(),
-                ".webp" => new WebpEncoder(),
-                _ => new PngEncoder()
-            };
         }
     }
 }
