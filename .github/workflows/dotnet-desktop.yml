@@ -71,17 +71,17 @@ jobs:
       uses: vimtor/action-zip@v1.1
       with:
         files: src/${{ env.TargetApplicationDirectory }}/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net6.0-windows/
-        dest: src/${{ env.InstallerApplicationDirectory }}/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net6.0-windows/${{ env.ZipPrefix-${{github.ref_name}} }}.zip
+        dest: src/${{ env.InstallerApplicationDirectory }}/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net6.0-windows/${{ env.ZipPrefix }}-${{ github.ref_name }}.zip
     
     - name: Pack release with installer
       uses: vimtor/action-zip@v1.1
       with:
         files: src/${{ env.InstallerApplicationDirectory }}/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net6.0-windows/
-        dest: src/${{ env.InstallerApplicationDirectory }}/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net6.0-windows/${{ env.ZipInstaller-${{github.ref_name}} }}.zip
+        dest: src/${{ env.InstallerApplicationDirectory }}/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net6.0-windows/${{ env.ZipInstaller }}-${{ github.ref_name }}.zip
 
     # Upload artifacts: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
       with:
         name: ${{ env.ArtifactName }}
-        path: src/${{ env.InstallerApplicationDirectory }}/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net6.0-windows/${{ env.ZipInstaller-${{github.ref_name}} }}.zip
+        path: src/${{ env.InstallerApplicationDirectory }}/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net6.0-windows/${{ env.ZipInstaller }}-${{ github.ref_name }}.zip
