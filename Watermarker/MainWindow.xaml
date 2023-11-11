@@ -11,7 +11,8 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"></RowDefinition>
-            <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="4*"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -21,7 +22,8 @@
         </Grid.ColumnDefinitions>
 
         <Label Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" Content="{Binding Path=Status, FallbackValue='StatusPlaceholder'}"></Label>
-        <Grid Grid.Row="1" Grid.Column="1">
+        <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" Content="{Binding Path=CopyTo, FallbackValue='CopyToPlaceholder'}" Foreground="#3abdfc" MouseUp="OutputDirectory_MouseUp" Cursor="Hand"></Label>
+        <Grid Grid.Row="2" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition></RowDefinition>
                 <RowDefinition Height="20"></RowDefinition>

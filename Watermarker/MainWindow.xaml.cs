@@ -8,6 +8,7 @@ using NLog;
 using Watermarker.Common;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Watermarker
 {
@@ -20,10 +21,12 @@ namespace Watermarker
         private int m_filesProcessed = 0;
         private readonly string m_directory;
         private readonly ApplicationConfiguration m_applicationConfiguration;
+        private string m_outputDirectory;
 
         [Notify] private string _status;
         [Notify] private string _itemsRemaining;
         [Notify] private string _progress;
+        [Notify] private string _copyTo;
 
         public MainWindow(string[] args)
         {
@@ -54,9 +57,9 @@ namespace Watermarker
             string folder = Path.GetFileName(m_directory);
             DateTime now = DateTime.Now;
             string folderName = $"{folder}_{now:yyyy\\yMM\\mdd\\d_HH\\hmm\\mss\\s}";
-            string outputDirectory = Path.Combine(rootDirectory, folderName);
-            Directory.CreateDirectory(outputDirectory);
-            Status = $"Processing {files.Count} files. Output: {folderName}";
+            m_outputDirectory = Path.Combine(rootDirectory, folderName);
+            Directory.CreateDirectory(m_outputDirectory);
+            CopyTo = folderName;
 
             ImageProcessor processor = new ImageProcessor(m_applicationConfiguration);
             processor.OnProcess += () =>
@@ -70,7 +73,7 @@ namespace Watermarker
                 });
             };
 
-            await processor.Process(files, outputDirectory);
+            await processor.Process(files, m_outputDirectory);
 
             Application.Current.Shutdown();
         }
@@ -89,6 +92,11 @@ namespace Watermarker
                 MessageBox.Show($"Directory \"{directory}\" does not exists", "Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
                 Environment.Exit(1);
             }
+        }
+
+        private void OutputDirectory_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Process.Start("explorer.exe", m_outputDirectory);
         }
     }
 }
