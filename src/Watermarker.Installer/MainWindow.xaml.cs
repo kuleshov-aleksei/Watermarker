@@ -12,7 +12,7 @@ namespace Watermarker.Installer
     public partial class MainWindow : Window
     {
         private const string BUNDLED_APPLICATION_PATTERN = "watermarker-*.zip";
-        private readonly Regex m_bundleVersionRegex = new Regex(@"^watermarker-(?'version'\d+\.\d+.\d+).zip$", RegexOptions.Compiled);
+        private readonly Regex m_bundleVersionRegex = new Regex(@"^watermarker-v(?'version'\d+\.\d+.\d+).zip$", RegexOptions.Compiled);
         private const string PUBLISHER = "Encamy";
         private const string APPLICATION_TITLE = "Watermarker";
         private const string APPLICATION_FILE = "Watermarker.exe";
