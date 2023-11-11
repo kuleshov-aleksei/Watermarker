@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="NLog" Version="5.2.5" />
+		<PackageReference Include="SixLabors.Fonts" Version="2.0.0" />
+		<PackageReference Include="SixLabors.ImageSharp" Version="3.0.2" />
+		<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.0.1" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<None Remove="Fonts\Agbalumo-Regular.ttf" />
+		<None Remove="Fonts\Roboto-Regular.ttf" />
+		<None Remove="Fonts\RubikMonoOne-Regular.ttf" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Fonts\Agbalumo-Regular.ttf" />
+		<EmbeddedResource Include="Fonts\Roboto-Regular.ttf" />
+		<EmbeddedResource Include="Fonts\RubikMonoOne-Regular.ttf" />
+	</ItemGroup>
+
+</Project>

@@ -6,9 +6,9 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
-namespace Watermarker
+namespace Watermarker.Common
 {
-    internal sealed class ApplicationConfiguration
+    public sealed class ApplicationConfiguration
     {
         [JsonPropertyName("ParallelThreads")]
         public int ParallelThreads { get; set; }
@@ -74,7 +74,7 @@ namespace Watermarker
             byte red = ParseColorByte(redString);
             byte green = ParseColorByte(greenString);
             byte blue = ParseColorByte(blueString);
-            
+
             if (string.IsNullOrEmpty(alphaString))
             {
                 return Color.FromRgb(red, green, blue);

@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using Watermarker.Common;
 
 namespace Watermarker
 {
@@ -10,7 +12,7 @@ namespace Watermarker
     {
         private static readonly Logger m_consoleLogger = LogManager.GetLogger("ColoredConsole");
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             ValidateArgs(args, out string directory);
             ApplicationConfiguration applicationConfiguration = ApplicationConfiguration.Load();
@@ -31,7 +33,7 @@ namespace Watermarker
             Directory.CreateDirectory(outputDirectory);
 
             ImageProcessor processor = new ImageProcessor(applicationConfiguration);
-            processor.Process(files, outputDirectory);
+            await processor.Process(files, outputDirectory);
         }
 
         private static void ValidateArgs(string[] args, out string directory)

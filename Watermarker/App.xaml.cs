@@ -13,5 +13,10 @@ namespace Watermarker
     /// </summary>
     public partial class App : Application
     {
+        void AppStartup(object sender, StartupEventArgs e)
+        {
+            MainWindow mainWindow = new MainWindow(e.Args);
+            mainWindow.Show();
+        }
     }
 }

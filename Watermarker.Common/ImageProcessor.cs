@@ -12,17 +12,21 @@ using SixLabors.ImageSharp.Formats.Tiff;
 using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace Watermarker
+namespace Watermarker.Common
 {
-    internal sealed class ImageProcessor
+    public sealed class ImageProcessor
     {
         private readonly FontProvider m_fontProvider;
-        private readonly Logger m_consoleLogger = LogManager.GetLogger("ColoredConsole");
+        private readonly Logger m_logger = LogManager.GetCurrentClassLogger();
         private readonly ApplicationConfiguration m_applicationConfiguration;
+
+        public event Action OnProcess;
 
         public ImageProcessor(ApplicationConfiguration applicationConfiguration)
         {
@@ -30,32 +34,32 @@ namespace Watermarker
             m_fontProvider = new FontProvider(m_applicationConfiguration.FontName);
         }
 
-        public void Process(List<string> files, string outputDirectory)
+        public async Task Process(List<string> files, string outputDirectory)
         {
             if (m_applicationConfiguration.ParallelThreads == 1)
             {
                 foreach (string file in files)
                 {
-                    ProcessFile(file, outputDirectory);
+                    await ProcessFile(file, outputDirectory);
                 }
             }
             else
             {
-                Parallel.ForEach(files, new ParallelOptions
+                await Parallel.ForEachAsync(files, new ParallelOptions
                 {
                     MaxDegreeOfParallelism = m_applicationConfiguration.ParallelThreads,
                 },
-                (file) => ProcessFile(file, outputDirectory));
+                async (file, _) => await ProcessFile(file, outputDirectory));
             }
         }
 
-        private void ProcessFile(string file, string outputDirectory)
+        private async Task ProcessFile(string file, string outputDirectory)
         {
-            m_consoleLogger.Trace($"Processing file {file}");
+            m_logger.Trace($"Processing file {file}");
             using (FileStream stream = File.OpenRead(file))
             {
                 string filename = Path.GetFileNameWithoutExtension(file);
-                Image<Rgba32> image = Image.Load<Rgba32>(stream);
+                Image<Rgba32> image = await Image.LoadAsync<Rgba32>(stream);
 
                 Font font = m_fontProvider.GetDefault();
 
@@ -75,9 +79,10 @@ namespace Watermarker
                     new PointF(xPosition, yPosition)));
 
                 string outputPath = Path.Combine(outputDirectory, Path.GetFileName(file));
-                m_consoleLogger.Trace($"Saving {file} to {outputPath}");
+                m_logger.Trace($"Saving {file} to {outputPath}");
 
-                image.Save(outputPath, CreateImageEncoder(Path.GetExtension(file)));
+                await image.SaveAsync(outputPath, CreateImageEncoder(Path.GetExtension(file)));
+                OnProcess?.Invoke();
             }
         }
 

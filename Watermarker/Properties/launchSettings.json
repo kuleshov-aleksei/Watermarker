@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Watermarker": {
+      "commandName": "Project",
+      "commandLineArgs": "D:\\Coding\\image-watermarker\\images"
+    }
+  }
+}

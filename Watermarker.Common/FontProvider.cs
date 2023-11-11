@@ -2,9 +2,9 @@
 using System.IO;
 using System.Reflection;
 
-namespace Watermarker
+namespace Watermarker.Common
 {
-    internal class FontProvider
+    public sealed class FontProvider
     {
         private readonly FontCollection m_fonts = new FontCollection();
         private readonly Font m_defaultFont;
