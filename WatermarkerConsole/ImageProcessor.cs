@@ -51,7 +51,7 @@ namespace Watermarker
 
         private void ProcessFile(string file, string outputDirectory)
         {
-            m_consoleLogger.Trace($"Обработка файла {file}");
+            m_consoleLogger.Trace($"Processing file {file}");
             using (FileStream stream = File.OpenRead(file))
             {
                 string filename = Path.GetFileNameWithoutExtension(file);
@@ -75,7 +75,7 @@ namespace Watermarker
                     new PointF(xPosition, yPosition)));
 
                 string outputPath = Path.Combine(outputDirectory, Path.GetFileName(file));
-                m_consoleLogger.Trace($"Сохранение {file} в {outputPath}");
+                m_consoleLogger.Trace($"Saving {file} to {outputPath}");
 
                 image.Save(outputPath, CreateImageEncoder(Path.GetExtension(file)));
             }

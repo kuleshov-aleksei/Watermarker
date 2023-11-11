@@ -18,11 +18,11 @@ namespace Watermarker
             List<string> files = Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories).ToList();
             if (files.Count == 0)
             {
-                m_consoleLogger.Error("Не найдено ни одного файла");
+                m_consoleLogger.Error("No files were found");
                 return;
             }
 
-            m_consoleLogger.Info($"Найдено {files.Count} файлов");
+            m_consoleLogger.Info($"Found {files.Count} files");
 
             string rootDirectory = Path.GetDirectoryName(directory);
             string folder = Path.GetFileName(directory);
@@ -38,14 +38,14 @@ namespace Watermarker
         {
             if (args.Length != 1)
             {
-                m_consoleLogger.Fatal("Укажите директорию для обработки");
+                m_consoleLogger.Fatal("Specify directory");
                 Environment.Exit(1);
             }
 
             directory = args[0];
             if (!Directory.Exists(directory))
             {
-                m_consoleLogger.Fatal($"Директорию \"{directory}\" не существует");
+                m_consoleLogger.Fatal($"Directory \"{directory}\" does not exists");
                 Environment.Exit(1);
             }
         }
