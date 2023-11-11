@@ -12,6 +12,7 @@ jobs:
     strategy:
       matrix:
         configuration: [Release]
+        targetplatform: [x86, x64]
 
     defaults:
       run:
@@ -20,15 +21,23 @@ jobs:
     runs-on: windows-latest
 
     env:
-      Solution_Name: Watermarker.sln
-      Wap_Project_Directory: Watermarker
-      Wap_Project_Path: Watermarker\Watermarker.csproj
+      App_Packages_Directory: AppPackages
+      Solution_Path: Watermarker.sln
+      Wpf_Project_Path: Watermarker\Watermarker.csproj
+      App_Packages_Directory: AppPackages
+      Wap_Project_Directory: Watermarker.Package
+      Wap_Project_Name: MyWpfApp.Package.wapproj
+      Actions_Allow_Unsecure_Commands: true # Allows AddPAth and SetEnv commands
 
     steps:
     - name: Checkout
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
+
+    - name: Use Nerdbank.GitVersioning to set version variables
+      uses: dotnet/nbgv@master
+      id: nbgv
 
     # Install the .NET Core workload
     - name: Install .NET Core
@@ -38,13 +47,21 @@ jobs:
 
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1.0.2
+      uses: microsoft/setup-msbuild@v1.1
+
+    # Update the version before build
+    - name: Update manifest version
+      run: |
+        [xml]$manifest = get-content ".\$env:Wap_Project_Directory\Package.appxmanifest"
+        $manifest.Package.Identity.Version = "${{ steps.nbgv.outputs.SimpleVersion }}.0"
+        $manifest.save(".\$env:Wap_Project_Directory\Package.appxmanifest")
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+      run: msbuild $env:Solution_Path /t:Restore /p:Configuration=$env:Configuration /p:RuntimeIdentifier=$env:RuntimeIdentifier
       env:
         Configuration: ${{ matrix.configuration }}
+        RuntimeIdentifier: win-${{ matrix.targetplatform }}
 
     # Decode the base 64 encoded pfx and save the Signing_Certificate
     - name: Decode the pfx
@@ -54,13 +71,14 @@ jobs:
         [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
 
     # Create the app package by building and packaging the Windows Application Packaging project
-    - name: Create the app package
-      run: msbuild $env:Wap_Project_Path /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx
+    - name: Build the Windows Application Packaging Project (wapproj)
+      run: msbuild $env:Solution_Path /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:BuildMode /p:AppxBundle=$env:AppxBundle /p:PackageCertificateKeyFile=$env:SigningCertificate
       env:
         Appx_Bundle: Always
+        BuildMode: SideloadOnly
         Appx_Bundle_Platforms: x86|x64
-        Appx_Package_Build_Mode: StoreUpload
-        Configuration: ${{ matrix.configuration }}
+        Appx_Package_Build_Mode: SideloadOnly
+        Configuration: ${{ matrix.targetplatform }}
 
     # Remove the pfx
     - name: Remove the pfx
@@ -71,4 +89,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: MSIX Package
-        path: src\${{ env.Wap_Project_Directory }}\AppPackages
+        path: src\${{ env.Wap_Project_Directory }}\${{ env.App_Packages_Directory }}
