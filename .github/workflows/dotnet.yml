@@ -8,11 +8,13 @@ on:
     branches: [ "master" ]
     paths-ignore:
       - 'scripts/**'
+      - 'docs/**'
       - '*.md'
   pull_request:
     branches: [ "master" ]
     paths-ignore:
       - 'scripts/**'
+      - 'docs/**'
       - '*.md'
 
 jobs:
