@@ -12,7 +12,11 @@ on:
 jobs:
   build:
 
-    runs-on: windows-latest
+    strategy:
+      matrix:
+        projects: [WatermarkerConsole]
+
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
@@ -21,6 +25,6 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore ${{ matrix.projects }}
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build ${{ matrix.projects }} --no-restore
