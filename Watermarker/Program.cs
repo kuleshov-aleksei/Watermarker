@@ -15,10 +15,22 @@ namespace Watermarker
             ValidateArgs(args, out string directory);
 
             List<string> files = Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories).ToList();
+            if (files.Count == 0)
+            {
+                m_consoleLogger.Error("Не найдено ни одного файла");
+                return;
+            }
+
             m_consoleLogger.Info($"Найдено {files.Count} файлов");
-            
+
+            string rootDirectory = Path.GetDirectoryName(directory);
+            string folder = Path.GetFileName(directory);
+            DateTime now = DateTime.Now;
+            string outputDirectory = Path.Combine(rootDirectory, $"{folder}_{now:yyyy\\yMM\\mdd\\d_HH\\hmm\\mss\\s}");
+            Directory.CreateDirectory(outputDirectory);
+
             ImageProcessor processor = new ImageProcessor();
-            processor.Process(files);
+            processor.Process(files, outputDirectory);
         }
 
         private static void ValidateArgs(string[] args, out string directory)

@@ -29,15 +29,15 @@ namespace Watermarker
             m_fontProvider = new FontProvider();
         }
 
-        public void Process(List<string> files)
+        public void Process(List<string> files, string outputDirectory)
         {
             foreach (string file in files)
             {
-                ProcessFile(file);
+                ProcessFile(file, outputDirectory);
             }
         }
 
-        private void ProcessFile(string file)
+        private void ProcessFile(string file, string outputDirectory)
         {
             m_consoleLogger.Trace($"Обработка файла {file}");
             using (FileStream stream = File.OpenRead(file))
@@ -62,7 +62,7 @@ namespace Watermarker
                     Pens.Solid(Color.FromRgb(0, 0, 0), borderWidth),
                     new PointF(xPosition, yPosition)));
 
-                string outputPath = Path.Combine("tmp", Path.GetFileName(file));
+                string outputPath = Path.Combine(outputDirectory, Path.GetFileName(file));
                 m_consoleLogger.Trace($"Сохранение {file} в {outputPath}");
 
                 image.Save(outputPath, CreateImageEncoder(Path.GetExtension(file)));
