@@ -34,19 +34,29 @@ namespace Watermarker.Common
         [JsonIgnore]
         public Color BorderColor { get; private set; }
 
+        private const string PUBLISHER = "Encamy";
+        private const string APPLICATION_TITLE = "Watermarker";
         private const string CONFIG_FILENAME = "config.json";
         private readonly Regex m_colorRegex = new Regex(@"^rgba?\((?'red'\d+)\, *(?'green'\d+)\, *(?'blue'\d+)[, ]*(?'alpha'\d+)?\)$", RegexOptions.Compiled);
         private static readonly Logger m_logger = LogManager.GetLogger("ColoredConsole");
 
         public static ApplicationConfiguration Load()
         {
-            if (!File.Exists(CONFIG_FILENAME))
+            string configPath = CONFIG_FILENAME;
+            if (!File.Exists(configPath))
             {
-                m_logger.Fatal($"Config file \"{CONFIG_FILENAME}\" does not exists");
-                Environment.Exit(1);
+                string programFiles = Environment.ExpandEnvironmentVariables("%ProgramW6432%");
+                string installPath = Path.Combine(programFiles, PUBLISHER, APPLICATION_TITLE);
+                configPath = Path.Combine(installPath, CONFIG_FILENAME);
+                if (!File.Exists(configPath))
+                {
+                    m_logger.Fatal($"Config file \"{configPath}\" does not exists");
+                    Environment.Exit(1);
+                }
             }
 
-            ApplicationConfiguration configuration = JsonSerializer.Deserialize<ApplicationConfiguration>(File.ReadAllText(CONFIG_FILENAME));
+            m_logger.Info($"Reading config from {configPath}");
+            ApplicationConfiguration configuration = JsonSerializer.Deserialize<ApplicationConfiguration>(File.ReadAllText(configPath));
             configuration.Process();
             return configuration;
         }

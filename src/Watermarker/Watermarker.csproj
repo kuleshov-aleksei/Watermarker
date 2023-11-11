@@ -5,6 +5,8 @@
         <TargetFramework>net6.0-windows</TargetFramework>
         <UseWPF>true</UseWPF>
         <Platforms>AnyCPU;x64</Platforms>
+	    <ApplicationIcon>Assets\icon-72x72.ico</ApplicationIcon>
+		<Version>1.1.4</Version>
     </PropertyGroup>
 
     <ItemGroup>
@@ -24,6 +26,9 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Update="Assets\icon-72x72.ico">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
         <None Update="config.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
