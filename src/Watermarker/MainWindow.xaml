@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Watermarker"
         mc:Ignorable="d"
+        Icon="/Assets/icon.ico"
         Title="Watermarker" Height="200" Width="400" ResizeMode="NoResize"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Loaded="OnLoaded">
