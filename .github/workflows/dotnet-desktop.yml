@@ -24,7 +24,6 @@ jobs:
       App_Packages_Directory: AppPackages
       Solution_Path: Watermarker.sln
       Wpf_Project_Path: Watermarker\Watermarker.csproj
-      App_Packages_Directory: AppPackages
       Wap_Project_Directory: Watermarker.Package
       Wap_Project_Name: MyWpfApp.Package.wapproj
       Actions_Allow_Unsecure_Commands: true # Allows AddPAth and SetEnv commands
